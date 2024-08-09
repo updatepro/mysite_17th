@@ -1,7 +1,9 @@
-package com.study.mysite;
+package com.study.mysite.question;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.study.mysite.answer.Answer;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
