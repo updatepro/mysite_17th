@@ -15,12 +15,16 @@ import com.study.mysite.answer.Answer;
 import com.study.mysite.answer.AnswerRepository;
 import com.study.mysite.question.Question;
 import com.study.mysite.question.QuestionRepository;
+import com.study.mysite.question.QuestionService;
 
 @SpringBootTest
 class Mysite17thApplicationTests {
 	
 	@Autowired
 	private QuestionRepository questionRepository;
+	
+	@Autowired
+	private QuestionService questionService;
 	
 	@Autowired
 	private AnswerRepository answerRepository;
@@ -83,14 +87,20 @@ class Mysite17thApplicationTests {
 //		a.setCreateDate(LocalDateTime.now());
 //		this.answerRepository.save(a);
 		
-		Optional<Question> oq = this.questionRepository.findById(2);
-		assertTrue(oq.isPresent());
-		Question q = oq.get();
+//		Optional<Question> oq = this.questionRepository.findById(2);
+//		assertTrue(oq.isPresent());
+//		Question q = oq.get();
+//		
+//		List<Answer> answerList = q.getAnswerList();
+//		//테스트 코드를 통과하지 못한 이유는 answerList는 q객체를 조회할 때가 아니라 getAnswerList()메소드를 호출하는 시점에 가져오기 때문에 에러가 난다. 이렇게 데이터를 필요한 시점에 가져오는 방식을 지연(lazy)방식이라고 한다. <=>이와 반대로 q객체를 조회할 때 미리 answer 리스트를 모두 가져오는 방식을 즉시(Eager)방식이라고 한다.=>테스트 코드시 이런 오류를 방지할 수 있는 가장 간단한 방법:@Transactional 애너테이션을 사용하여 DB세션이 끊기지 않고 계속 유지가 되어 해결!!
+//		assertEquals(1, answerList.size());
+//		assertEquals("스프링부트에서 사용하는 JPA 인터페이스의 실제 구현체이다.", answerList.get(0).getContent());
 		
-		List<Answer> answerList = q.getAnswerList();
-		//테스트 코드를 통과하지 못한 이유는 answerList는 q객체를 조회할 때가 아니라 getAnswerList()메소드를 호출하는 시점에 가져오기 때문에 에러가 난다. 이렇게 데이터를 필요한 시점에 가져오는 방식을 지연(lazy)방식이라고 한다. <=>이와 반대로 q객체를 조회할 때 미리 answer 리스트를 모두 가져오는 방식을 즉시(Eager)방식이라고 한다.=>테스트 코드시 이런 오류를 방지할 수 있는 가장 간단한 방법:@Transactional 애너테이션을 사용하여 DB세션이 끊기지 않고 계속 유지가 되어 해결!!
-		assertEquals(1, answerList.size());
-		assertEquals("스프링부트에서 사용하는 JPA 인터페이스의 실제 구현체이다.", answerList.get(0).getContent());
+		for(int i = 1; i <= 100; i++) {
+			String subject = String.format("테스트 코드를 이용하여 생성한 제목:[%03d]", i);
+			String content = String.format("테스트 코드를 이용하여 생성한 질문내용:[%03d]",i);
+			this.questionService.create(subject, content);
+		}
 	}
 
 }
