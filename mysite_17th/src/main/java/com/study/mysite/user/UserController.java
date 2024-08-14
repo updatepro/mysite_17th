@@ -1,5 +1,6 @@
 package com.study.mysite.user;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,10 +34,29 @@ public class UserController {
 			return "signup_form";
 		}
 		
-		userService.create(userCreateForm.getUsername(), userCreateForm.getEmail(), userCreateForm.getPassword1());
+		try {
+			userService.create(userCreateForm.getUsername(), userCreateForm.getEmail(), userCreateForm.getPassword1());
+		}catch(DataIntegrityViolationException e){
+			// unique로 설정한 값에 같은 데이터가 들어갈 때 발생하는 예외 클래스
+			e.printStackTrace();
+			bindingResult.reject("signupFailed","이미 존재하는 아이디/이메일입니다.");
+			//reject(오류코드(임의),오류 메시지)
+			return "signup_form";
+		}catch(Exception e) {
+			e.printStackTrace();
+			bindingResult.reject("signupFailed",e.getMessage());
+			return "signup_form";
+		}
 		
 		
 		return "redirect:/";
 	}
+	@GetMapping("/login")
+	public String login() {
+		return "login_form";
+	}
+//	@PostMapping("/login") public String login() {
+//		이 부분은 스프링 시큐리티가 알아서 처리하므로 구현 필요 없음
+//	}
 	
 }
