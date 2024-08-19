@@ -1,0 +1,17 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content">
+	<div class="container">
+		<h5 class="border-bottom">답변 수정</h5>
+		<form th:object="${answerForm}" method="post">
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+			<!-- form 태그의 action속성을 생략하면 현재 호출된 url로 폼이 전송된다. action속성에 csrf속성을 못넣었는데 꼭 있어야 하는 값이므로 직접 추가함-->
+			<div th:replace="~{form_errors :: formErrorFragment}"></div>
+			<div>
+				<label for="content">내용</label>
+				<textarea name="" id="content" cols="30" rows="10" th:field="*{content}" class="form-control"></textarea>
+				<input type="submit" value="저장" class="btn btn-info"/>
+			</div>
+		</form>
+	</div>
+</div>
+</html>
