@@ -36,11 +36,11 @@ public class QuestionController {
 	
 	//게시판 리스트로 이동
 	@GetMapping("/list")
-	public String list(Model model, @RequestParam(value="page",defaultValue="0") int page) {
+	public String list(Model model, @RequestParam(value="page",defaultValue="0") int page, @RequestParam(value="kw",defaultValue="") String kw) {
 //		List<Question> questionList = this.questionRepository.findAll();
 //		List<Question> questionList = this.questionService.getList();
 		
-		Page<Question> paging = this.questionService.getList(page);
+		Page<Question> paging = this.questionService.getList(page,kw);
 		
 		model.addAttribute("paging", paging);
 		
@@ -125,5 +125,17 @@ public class QuestionController {
 		}
 		this.questionService.delete(question);
 		return "redirect:/question/list";
+	}
+	
+	//좋아요 클릭시
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/vote/{id}")
+	public String questionVote(Principal principal, @PathVariable("id") Integer id) {
+		Question question = this.questionService.getQuestion(id);
+		SiteUser siteUser = this.userService.getUser(principal.getName());
+		this.questionService.vote(question, siteUser);
+		//db에 저장
+		
+		return String.format("redirect:/question/detail/%s", id);
 	}
 }

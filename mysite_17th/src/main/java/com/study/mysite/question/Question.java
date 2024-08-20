@@ -2,6 +2,7 @@ package com.study.mysite.question;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import com.study.mysite.answer.Answer;
 import com.study.mysite.user.SiteUser;
@@ -12,6 +13,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
@@ -42,4 +44,8 @@ public class Question {
 	@ManyToOne
 	private SiteUser author;
 	//사용자 한명이 질문을 여러개 작성할 수 있으므로 다대일 관계가 성립
+	
+	@ManyToMany
+	Set<SiteUser> voter;
+	//다 대 다 (하나의 질문에 여러명이 좋아요 가능, 한 사람이 여러 질문에 좋아요 가능)
 }

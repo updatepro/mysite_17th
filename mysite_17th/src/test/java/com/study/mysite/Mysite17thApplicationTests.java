@@ -96,11 +96,11 @@ class Mysite17thApplicationTests {
 //		assertEquals(1, answerList.size());
 //		assertEquals("스프링부트에서 사용하는 JPA 인터페이스의 실제 구현체이다.", answerList.get(0).getContent());
 		
-		for(int i = 1; i <= 100; i++) {
-			String subject = String.format("테스트 코드를 이용하여 생성한 제목:[%03d]", i);
-			String content = String.format("테스트 코드를 이용하여 생성한 질문내용:[%03d]",i);
-			this.questionService.create(subject, content);
+//		for(int i = 1; i <= 100; i++) {
+//			String subject = String.format("테스트 코드를 이용하여 생성한 제목:[%03d]", i);
+//			String content = String.format("테스트 코드를 이용하여 생성한 질문내용:[%03d]",i);
+//			this.questionService.create(subject, content);
+//	}
+//}
 		}
 	}
-
-}
