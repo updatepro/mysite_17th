@@ -1,11 +1,16 @@
 package com.study.mysite.user;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +22,17 @@ public class UserController {
 	private final UserService userService;
 	
 	@GetMapping("/signup")
-	public String signup(UserCreateForm userCreateForm) {
+	public String signup(UserCreateForm userCreateForm, @AuthenticationPrincipal UserDetails userDetails, Model model) {
+		if(userDetails != null) {
+			SiteUser user = userService.getUser(userDetails.getUsername());
+			model.addAttribute("profileImage",user.getImageUrl());
+		}
+		
 		return "signup_form";
 	}
 	
 	@PostMapping("/signup")
-	public String signup(@Valid UserCreateForm userCreateForm, BindingResult bindingResult) {
+	public String signup(@Valid UserCreateForm userCreateForm, BindingResult bindingResult, @RequestParam("imageFile") MultipartFile imageFile) {
 		
 		if(bindingResult.hasErrors()) {
 			return "signup_form";
@@ -35,12 +45,13 @@ public class UserController {
 		}
 		
 		try {
-			userService.create(userCreateForm.getUsername(), userCreateForm.getEmail(), userCreateForm.getPassword1());
-		}catch(DataIntegrityViolationException e){
-			// unique로 설정한 값에 같은 데이터가 들어갈 때 발생하는 예외 클래스
+			userService.create(userCreateForm.getUsername(), userCreateForm.getEmail(), userCreateForm.getPassword1(), imageFile);
+			
+		}catch(DataIntegrityViolationException e) {
+			//DataIntegrityViolationException : unique으로 설정한 값에 같은 데이터가 들어갈 때 발생하는 예외 클래스
 			e.printStackTrace();
-			bindingResult.reject("signupFailed","이미 존재하는 아이디/이메일입니다.");
-			//reject(오류코드(임의),오류 메시지)
+			bindingResult.reject("signupFailed","이미 등록된 사용자입니다.");
+			//reject(오류 코드,오류 메세지)
 			return "signup_form";
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -48,15 +59,19 @@ public class UserController {
 			return "signup_form";
 		}
 		
-		
 		return "redirect:/";
 	}
+	
+	
 	@GetMapping("/login")
 	public String login() {
 		return "login_form";
 	}
-//	@PostMapping("/login") public String login() {
-//		이 부분은 스프링 시큐리티가 알아서 처리하므로 구현 필요 없음
-//	}
 	
+	
+	/*
+	 * @PostMapping("/login") public String login() {
+	 * 	이 부분은 스프링 시큐리티가 대신 알아서 처리하므로 우리가 구현할 필요가 없다!
+	 * }
+	 */
 }
